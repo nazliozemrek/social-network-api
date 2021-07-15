@@ -2,32 +2,44 @@ const { User } = require('../models');
 
 const userController = {
     //get all users
-    getAllUser(req, res) {
+    getAllUsers(req, res) {
         User.find({})
+        .populate({
+            path:'thoughts',
+            select:'-__v'
+        })
             .select('-__v')
             .then((dbUserData) => {
                 res.json(dbUserData);
             })
             .catch(err => {
                 console.log(err);
-                res.sendStatus(400);
+                res.status(500).json(err)
             });
     },
     getUserById({ params }, res) {
         User.findOne({ _id: params.id })
+        .populate({
+            path:'thoughts',
+            select:'-__v'
+        })
+        .populate({
+            path:'friends',
+            select:'-__v'
+        })
             .select('-__v')
             .then((dbUserData) => {
                 res.json(dbUserData);
             })
             .catch(err => {
                 console.log(err);
-                res.sendStatus(400);
+                res.status(500).json(err);
             });
     },
-    createUser(req, res) {
-        User.create(req.body)
+    createUser({body}, res) {
+        User.create(body)
             .then(dbUserData => res.json(dbUserData))
-            .catch(err => res.json(err));
+            .catch(err => res.status(400).json(err));
     },
     addFriend({ params }, res) {
         User.findOneAndUpdate(
@@ -68,6 +80,7 @@ const userController = {
                 }
                 res.json(dbUserData);
             })
+        .catc(err => res.status(400).json(err))
 
     },
     removeFriend({params},res){
