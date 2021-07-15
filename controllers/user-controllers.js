@@ -80,7 +80,7 @@ const userController = {
                 }
                 res.json(dbUserData);
             })
-        .catc(err => res.status(400).json(err))
+        .catch(err => res.status(400).json(err))
 
     },
     removeFriend({params},res){
